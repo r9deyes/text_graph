@@ -7,12 +7,18 @@ class text_words:
 	t,i,ii,sp,wp,sw=None,None,None,None,None,None
 	pre_word=None
 	prepre_word=None
-	def __init__(s,text,stop_words=[u'-'],words_pattern=ur'[a-zA-Zа-яёА-ЯЁ\-]+',separating=u'(\.|;|\s|,)+'):
-		#([a-zA-Z]|й|ц|у|к|е|н|г|ш|щ|з|х|ъ|ф|ы|в|а|п|р|о|л|д|ж|э|я|ч|с|м|и|т|ь|б|ю|ё|Й|Ц|У|К|Е|Н|Г|Ш|Щ|З|Х|Ъ|Ф|Ы|В|А|П|Р|О|Л|Д|Ж|Э|Я|Ч|С|М|И|Т|Ь|Б|Ю|Ё|\-)+
+	def __init__(s,text,stop_words=[u'-'],	#ur'[a-zA-Zа-яёА-ЯЁ\-]+'
+				 words_pattern=ur'([a-zA-Z]|й|ц|у|к|е|н|г|ш|щ|з|х|ъ|ф|ы|в|а|п|р|о|л|д|ж|э|я|ч|с|м|и|т|ь|б|ю|ё|Й|Ц|У|К|Е|Н|Г|Ш|Щ|З|Х|Ъ|Ф|Ы|В|А|П|Р|О|Л|Д|Ж|Э|Я|Ч|С|М|И|Т|Ь|Б|Ю|Ё|\-)+',
+				 separating=u'(\.|;|\s|,)+'):
 		s.t=text
 		s.i=0
 		s.ii=-1
-		s.wp=re.compile(words_pattern)
+		if isinstance(words_pattern, str) or isinstance(words_pattern, unicode):
+			s.wp=re.compile(words_pattern)
+		elif hasattr(words_pattern, 'search'):
+			s.wp = words_pattern
+		else:
+			s.wp = re.compile(str(words_pattern))
 		s.sp=re.compile(separating)
 		s.sw=stop_words
 		s.pre_word=None
@@ -57,8 +63,8 @@ class text_words:
 		return _str
 	
 	def lower(text):
-		cl='йцукенгшщзхъфывапролджэячсмитьбюё'
-		cU='ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁ'
+		cl=u'йцукенгшщзхъфывапролджэячсмитьбюё'
+		cU=u'ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁ'
 		for c in range(33):
 			text=text.replace(cU[c],cl[c])
 		return text
@@ -89,9 +95,9 @@ class text_graph(nx.DiGraph):
 			encoding='utf-8'
 			print('Error: Encoding not detected, utf-8 selected\n')
 		if (encoding):
-			ss=text_words(text.decode(encoding),stop_words=stop_words)#.decode(encoding))#text.decode('cp1251').split()#
+			ss=text_words(text.decode(encoding), stop_words=stop_words)#.decode(encoding))#text.decode('cp1251').split()#
 		else:
-			ss=text_words(unicode(text,'utf-8'),stop_words=stop_words)
+			ss=text_words(unicode(text,'utf-8'), stop_words=stop_words)
 		s.node_list=dict()
 		s.node_property=dict()
 		s.edge_list=dict()
@@ -157,6 +163,7 @@ class text_graph(nx.DiGraph):
 			pAr[p]=property[p]
 	
 	def _add_node(s,n,prop='weight',val=1,def_val=1):
+		# type: (str, str, int, int) -> None
 		if (s.node[n].get(prop)):
 			s.node[n][prop]+=val
 		else:
@@ -276,6 +283,141 @@ class text_graph(nx.DiGraph):
 		return lists[l]
 
 
+class sentence_graph(text_graph):
+	def __init__(self, text, fromFile=0, stop_words=('-')):
+		W = ur'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯA-Z'
+		w = W+ur'a-zабвгдеёжзийклмнопрстуфхцчшщъыьэюя'
+
+		nx.DiGraph.__init__(self)
+		if (fromFile):
+			with open(text) as f:
+				text = f.read()
+		try:
+			encoding = \
+			chardet.detect(text[:289] + ' ' + text[len(text) / 2 - 144:len(text) / 2 + 144] + ' ' + text[-289:])[
+				'encoding']
+		except(TypeError):
+			encoding = 'utf-8'
+			print('Error: Encoding not detected, utf-8 selected\n')
+		sentence_pattern = re.compile(ur'.*?[\.\.\.|\.|\!|\?|\n\n](?=[^' + w + ur']*?([' + W + ur']))', flags=(re.U | re.S))
+		if (encoding):
+			sents = text_words(re.sub(ur'\s+', u' ', text.decode(encoding)+u' . A'), stop_words=(' ', '.', '\n', '\r\n',),
+							   words_pattern=sentence_pattern)
+			#wrd = text_words(text.decode(encoding),
+			#				 stop_words=stop_words)  # .decode(encoding))#text.decode('cp1251').split()#
+		else:
+			sents = text_words(re.sub(ur'\s+', u' ', unicode(text,'utf-8')+u' . A'), stop_words=(' ', '.','\n', '\r\n',),
+							   words_pattern=sentence_pattern)
+			#wrd = text_words(unicode(text, 'utf-8'), stop_words=stop_words)
+		self.node_list = dict()
+		self.node_property = dict()
+		self.edge_list = dict()
+		self.edge_property = dict()
+		_S = None
+		wrd = text_words(sents[0], stop_words=stop_words)
+		try:
+			self.add_node(wrd[0].lower())
+			_S = wrd[0].lower()
+		except(IndexError):
+			return None
+		self.node_list = dict()
+		self.node_property = dict()
+		self.edge_list = dict()
+		self.edge_property = dict()
+		self.add_properties('node', weight=1, textPositionFirst=-1, textPositionLast=-1, textPositionAvg=0, edges_in=0,
+							edges_out=0, sweight=1.0, sentCount=1, PositionFirstSent=1, PositionAvgSent= 1.0, PositionLastSent=1)
+		self.add_properties('edge', weight=1, textPositionFirst=-1, textPositionLast=-1, textPositionAvg=0, sweight=1.0,
+							is_tree_edge=False, PositionFirstSent=1, PositionAvgSent= 1.0, PositionLastSent=1)
+		self.node[_S]['weight'] = 1
+		self.node[_S]['sentCount'] = 1
+		self.node[_S]['textPositionFirst'] = 1
+		self.node[_S]['textPositionAvg'] = 1
+		self.node[_S]['textPositionLast'] = 1
+
+		self.node[_S]['PositionFirstSent'] = 1
+		self.node[_S]['PositionAvgSent'] = 1
+		self.node[_S]['PositionLastSent'] = 1
+
+		self.sentence_words = dict()
+
+		sn = 0
+		self.sentence_words[sn]=set()
+		words_count = self.compute_stats_text_words(wrd, sn, 1)
+		for snt in sents:
+			sn += 1
+			try:
+				sents.__getitem__(sn)
+			except(IndexError):
+				break
+			self.sentence_words[sn]=set()
+			wrd = text_words(snt, stop_words=stop_words)
+			words_count = self.compute_stats_text_words(wrd, sn, words_count)
+
+		# TODO compute right stats for words in sentences. e.g. Avg position in sent
+		if 1:
+			return
+		for v in self.node.keys():
+			try:
+				self.node[v]['textPositionAvg'] /= float(self.node[v]['weight'])
+			except KeyError:
+				print(v)
+				continue
+			self.node[v]['PositionAvgSent'] /= float(self.node[v]['weight'])
+			self.node[v]['edges_out'] = len(self.edge[v])
+			self.node[v]['edges_in'] = 0
+			self.node[v]['sweight'] = 1.0 / self.node[v]['weight']
+		for e in self.edge:
+			for ee in self.edge[e]:
+				self.edge[e][ee]['textPositionAvg'] /= float(self.edge[e][ee]['weight'])
+				try:
+					self.node[ee]['edges_in'] += 1
+				except KeyError:
+					print(e, ' ', ee)
+					continue
+				self.edge[e][ee]['is_tree_edge'] = self.node[e]['textPositionFirst'] < self.node[ee]['textPositionFirst']
+				self.edge[e][ee]['sweight'] = 1.0 / self.edge[e][ee]['weight']
+		self.sort_edge()
+		self.sort_node()
+
+	def compute_stats_text_words(self, wrd, sn, glbPos=0):
+		# type: (text_words, int, int) -> int
+		t = 0
+		for tt in wrd:
+			t += 1
+			glbPos += 1
+			try:
+				wrd[t] = wrd[t]
+			except(IndexError):
+				break
+			# TODO add stats for count of word repeating in diff sentences: sentCount
+			self.add_node(wrd[t])
+			self._add_node(wrd[t], 'weight', 1, 1)
+			if not (self.node[wrd[t]].get(	'textPositionFirst')):
+				self.node[wrd[t]][			'textPositionFirst'] = 	glbPos + 1
+			if not (self.node[wrd[t]].get(	'PositionFirstSent')):
+				self.node[wrd[t]][			'PositionFirstSent'] = 	t + 1
+			self._add_node(wrd[t], 			'textPositionAvg', 		glbPos + 1, glbPos + 1)
+			self.node[wrd[t]][				'textPositionLast'] = 	glbPos + 1
+			self._add_node(wrd[t], 			'PositionAvgSent', 		t + 1, t + 1)
+			self.node[wrd[t]][				'PositionLastSent'] = 	t + 1
+			self.add_edge(wrd[t - 1], wrd[t])
+			self._add_edge(wrd[t - 1], wrd[t])
+			if not (self.edge[wrd[t - 1]][wrd[t]].get(	'textPositionFirst')):
+				self.edge[wrd[t - 1]][wrd[t]][			'textPositionFirst'] = 	glbPos
+			self._add_edge(wrd[t - 1], wrd[t], 			'textPositionAvg', 		1 + glbPos, glbPos + 1)
+			self.edge[wrd[t - 1]][wrd[t]][				'textPositionLast'] = 	glbPos
+			if not (self.edge[wrd[t - 1]][wrd[t]].get(	'PositionFirstSent')):
+				self.edge[wrd[t - 1]][wrd[t]][			'PositionFirstSent'] = 	t
+			self._add_edge(wrd[t - 1], wrd[t], 			'PositionAvgSent', 		1 + t, t + 1)
+			self.edge[wrd[t - 1]][wrd[t]][				'PositionLastSent'] = 	t
+
+			self.sentence_words[sn].add(wrd[t])
+
+		return glbPos
+
+
+
+
 class separate_graph(text_graph):
 	def __init__(s,text,separating='(\.|;|\n\n)',fromFile=0):
 		nx.DiGraph.__init__(s)
@@ -347,3 +489,56 @@ class separate_graph(text_graph):
 				s.edge[e][ee]['sweight']=1.0/s.edge[e][ee]['weight']
 		s.sort_edge()
 		s.sort_node()
+
+def f():
+	text = 'D:/Users/DAN85_000/Desktop/py/tg/corpus/1.txt'
+	sg = sentence_graph(text, 1,stop_words=(u'в', u'но', u'и', u'на', u'из', u'то',
+                                            u'к', u'а', u'что', u'-',u'не', u'с', u'о'))
+	kn = sg.node.keys()
+	return sg
+
+def all_pairs_in_sent(sg):
+	# type: (sentence_graph) -> None
+	words=None
+	res = []
+	for sn in range(len(sg.sentence_words)):
+		words = sg.sentence_words[sn].copy()
+		res.append(dict())
+		res[sn][(u'_', u'_')] = 0
+		for sw in range(len(words)):
+			w = words.pop()
+			for w2 in words:
+				if sg.edge.has_key(w):
+					if sg.edge[w].has_key(w2):
+						res[sn][(w,w2)] = sg.edge[w][w2]['weight']
+					else:
+						res[sn][(u'_',u'_')] +=1
+				if sg.edge.has_key(w2):
+					if sg.edge[w2].has_key(w):
+						res[sn][(w2,w)] = sg.edge[w2][w]['weight']
+					else:
+						res[sn][(u'_',u'_')] +=1
+	return res
+
+
+
+
+if __name__=='__main__':
+	sg=f()
+	rp = all_pairs_in_sent(sg)
+	i=0
+	for r in rp:
+		def _f(x,y):
+			if r[x]>r[y]:
+				return 1
+			elif r[x]<r[y]:
+				return -1
+			else:
+				return 0
+		ar = r.keys()
+		ar.sort(cmp=_f)#lambda x,y: 1 if r[x]>r[y] else -1 if r[x]<r[y] else 0)
+		i+=1
+		print(i)
+		for k in ar:
+			print(u'%s %s: %i'%(k[0],k[1],r[k]))
+	pass

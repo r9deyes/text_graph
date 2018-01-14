@@ -1,7 +1,8 @@
 # -*-coding:utf8-*-#
 if 1 and __name__ == '__main__':
-    from text_graph import text_graph
+    from text_graph import text_graph, sentence_graph
 
+    path = 'D:/Users/DAN85_000/Desktop/py/tg/'
 
     def f(tg, out='D:/users/DAN85_000/Desktop/result.html'):
         fl = open(out, 'wb')
@@ -39,6 +40,10 @@ if 1 and __name__ == '__main__':
         t += '</table><br>'
         # t.replace('|','</td><td>').replace('\n','</td></tr>\n<tr><td>')+
         fl.write(t)  # print(t)
+        fl.close()
+
+    def f_stat(tg,out='D:/users/DAN85_000/Desktop/result.html'):
+        fl = open(out.replace('.html','_.html'),'wb')
         t0 = 'Property \t | Max \t| Value \t | Min \t| Value \t | Avg Value \t | Closest Avg \t| Value \n'
         for p in tg.node_property:
             mx, mn, avg = tg.node_list[p][0], tg.node_list[p][-1], float(
@@ -81,7 +86,7 @@ if 1 and __name__ == '__main__':
             tg = text_graph(u' '.join(words), 0,
                             stop_words=(u'в', u'но', u'и', u'на', u'из', u'то', u'к', u'а', u'что', u'-'))
             # 'm a m a m y l a r a m u')#text)
-            res = 'D:/Users/DAN85_000/Desktop/tg/result.html'
+            res = path+'result.html'
             f(tg, res[:-5] + '%i.html' % i)
 
 
@@ -89,13 +94,29 @@ if 1 and __name__ == '__main__':
             # f(stg,'D:/Users/DAN85_000/Desktop/resultAbs.html')
 
 
-    def winHelp_processing():
-        for i in range(1, 11a):
-            fl = 'D:/Users/DAN85_000/Desktop/tg/corpus/' + str(i) + '.txt'
-            tg = text_graph(fl, 1, stop_words=(u'в', u'но', u'и', u'на', u'из', u'то', u'к', u'а', u'что', u'-')).get_morphem_absolut_graph()
-            res = 'D:/Users/DAN85_000/Desktop/tg/result/' + str(i) + '.html'
-            f(tg, res)
+    def tolstoi_processing():
+        for i in range(4, 5):
+            fl = path+'corpus/tolstoi/' + str(i) + '.txt'
+            tg = text_graph(fl, 1, stop_words=(u'в', u'но', u'и', u'на', u'из', u'то', u'к', u'а', u'что', u'-',u'не', u'с', u'о'))#.get_morphem_absolut_graph()
+            res = path+'result/tolstoi/S_' + str(i) + '.html'
+            #f(tg, res)
+            f_stat(tg,res)
 
+    def tolstoi_sentences():
+        for i in range(1,5):
+            fl = path+'corpus/tolstoi/' + str(i) + '.txt'
+            sg = sentence_graph(fl, fromfile=1,
+                                stop_words=(u'в', u'но', u'и', u'на', u'из', u'то',
+                                            u'к', u'а', u'что', u'-',u'не', u'с', u'о'))
+
+    def winHelp_processing():
+        for i in range(1, 11):
+            fl = path + 'corpus/' + str(i) + '.txt'
+            tg = text_graph(fl, 1, stop_words=(
+            u'в', u'но', u'и', u'на', u'из', u'то', u'к', u'а', u'что', u'-',u'не', u'с', u'о')).get_morphem_absolut_graph()
+            res = path + 'result/' + str(i) + '.html'
+            # f(tg, res)
+            f_stat(tg, res)
 
     def wordFrequencyGraph(tg, fileName):
         import matplotlib.pyplot as plt
@@ -108,6 +129,9 @@ if 1 and __name__ == '__main__':
         else:
             x = list(range(len(y), 0))
         plt.plot(x, y,color='b')
+        plt.title("Frequency of words in full text")
+        plt.ylabel('Frequency')
+        plt.xlabel('Order')
         plt.savefig(fileName, format='png')
         plt.clf()
 
@@ -123,11 +147,15 @@ if 1 and __name__ == '__main__':
         else:
             x = list(range(len(y), 0))
         plt.plot(x, y,color='r')
+        plt.title("Frequency of word's pairs in full text")
+        plt.ylabel('Frequency')
+        plt.xlabel('Order')
         plt.savefig(fileName, format='png')
         plt.clf()
 
 
-    winHelp_processing()
+    #winHelp_processing()
+    tolstoi_processing()
 # print('V cnt: %i, E cnt: %i'%(len(tg.node),len(tg.edge)))
 ##	path=tg.shortest_way(tg.vertexes.lists['wight'][0],tg.node.lists['wight'][-1])
 #	for v in tg.node.keys():
