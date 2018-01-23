@@ -1,6 +1,6 @@
 # -*-coding:utf8-*-#
 if 1 and __name__ == '__main__':
-    from text_graph import text_graph, sentence_graph
+    from text_graph import TextGraph, sentence_graph
 
     path = 'D:/Users/DAN85_000/Desktop/py/tg/'
 
@@ -83,8 +83,8 @@ if 1 and __name__ == '__main__':
             r = ET.parse(fl).getroot()
             words = [t.attrib['text'] for pp in r.findall('paragraphs') for p in pp.findall('paragraph') for s in
                      p.findall('sentence') for tt in s.findall('tokens') for t in tt.findall('token')]
-            tg = text_graph(u' '.join(words), 0,
-                            stop_words=(u'в', u'но', u'и', u'на', u'из', u'то', u'к', u'а', u'что', u'-'))
+            tg = TextGraph(u' '.join(words), 0,
+                           stop_words=(u'в', u'но', u'и', u'на', u'из', u'то', u'к', u'а', u'что', u'-'))
             # 'm a m a m y l a r a m u')#text)
             res = path+'result.html'
             f(tg, res[:-5] + '%i.html' % i)
@@ -97,7 +97,7 @@ if 1 and __name__ == '__main__':
     def tolstoi_processing():
         for i in range(4, 5):
             fl = path+'corpus/tolstoi/' + str(i) + '.txt'
-            tg = text_graph(fl, 1, stop_words=(u'в', u'но', u'и', u'на', u'из', u'то', u'к', u'а', u'что', u'-',u'не', u'с', u'о'))#.get_morphem_absolut_graph()
+            tg = TextGraph(fl, 1, stop_words=(u'в', u'но', u'и', u'на', u'из', u'то', u'к', u'а', u'что', u'-', u'не', u'с', u'о'))#.get_morphem_absolut_graph()
             res = path+'result/tolstoi/S_' + str(i) + '.html'
             #f(tg, res)
             f_stat(tg,res)
@@ -112,7 +112,7 @@ if 1 and __name__ == '__main__':
     def winHelp_processing():
         for i in range(1, 11):
             fl = path + 'corpus/' + str(i) + '.txt'
-            tg = text_graph(fl, 1, stop_words=(
+            tg = TextGraph(fl, 1, stop_words=(
             u'в', u'но', u'и', u'на', u'из', u'то', u'к', u'а', u'что', u'-',u'не', u'с', u'о')).get_morphem_absolut_graph()
             res = path + 'result/' + str(i) + '.html'
             # f(tg, res)
@@ -179,14 +179,14 @@ if 1 and __name__ == '__main__':
 #
 #
 if 0 and __name__ == '__main__':
-    from text_graph import text_graph
+    from text_graph import TextGraph
 
 
     def str2nodes_n_edges():
         text = 'q w e r t y'
         nodes = ['q', 'w', 'e', 'r', 't', 'y']
         edges = [('q', 'w'), ('w', 'e'), ('e', 'r'), ('r', 't'), ('t', 'y')]
-        tg = text_graph(text)
+        tg = TextGraph(text)
         assert (set(tg.node.keys) == set(nodes))
         assert (set(tg.edge.keys) == set(edges))
 
@@ -195,7 +195,7 @@ if 0 and __name__ == '__main__':
         text = 'q w e w e r r t y'
         nodes = ['q', 'w', 'e', 'r', 't', 'y']
         edges = [('q', 'w'), ('w', 'e'), ('e', 'w'), ('w', 'e'), ('e', 'r'), ('r', 'r'), ('r', 't'), ('t', 'y')]
-        tg = text_graph(text)
+        tg = TextGraph(text)
         assert (set(tg.node.keys()) == set(nodes))
         assert (set(tg.edge.keys()) == set(edges))
 

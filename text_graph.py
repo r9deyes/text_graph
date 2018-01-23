@@ -3,7 +3,7 @@ import networkx as nx
 import chardet
 ### TODO use chardet library for auto detecting encoding
 import re
-class text_words:
+class TextWords:
 	t,i,ii,sp,wp,sw=None,None,None,None,None,None
 	pre_word=None
 	prepre_word=None
@@ -77,7 +77,7 @@ class text_words:
 		if (i==s.ii-1):
 			s.prepre_word=y
 
-class text_graph(nx.DiGraph):
+class TextGraph(nx.DiGraph):
 	path='D:\Users\DAN85_000\Downloads\mystem-3.0-win7-32bit'
 	node_list=None
 	node_property=None
@@ -95,9 +95,9 @@ class text_graph(nx.DiGraph):
 			encoding='utf-8'
 			print('Error: Encoding not detected, utf-8 selected\n')
 		if (encoding):
-			ss=text_words(text.decode(encoding), stop_words=stop_words)#.decode(encoding))#text.decode('cp1251').split()#
+			ss=TextWords(text.decode(encoding), stop_words=stop_words)#.decode(encoding))#text.decode('cp1251').split()#
 		else:
-			ss=text_words(unicode(text,'utf-8'), stop_words=stop_words)
+			ss=TextWords(unicode(text, 'utf-8'), stop_words=stop_words)
 		s.node_list=dict()
 		s.node_property=dict()
 		s.edge_list=dict()
@@ -112,8 +112,10 @@ class text_graph(nx.DiGraph):
 		s.node_property=dict()
 		s.edge_list=dict()
 		s.edge_property=dict()
-		s.add_properties('node',weight=1,textPositionFirst=-1,textPositionLast=-1,textPositionAvg=0,edges_in=0,edges_out=0,sweight=1.0)
-		s.add_properties('edge',weight=1,textPositionFirst=-1,textPositionLast=-1,textPositionAvg=0,sweight=1.0,is_tree_edge=False)
+		s.add_properties('node',weight=1,textPositionFirst=-1,textPositionLast=-1,
+						 textPositionAvg=0,edges_in=0,edges_out=0,sweight=1.0)
+		s.add_properties('edge',weight=1,textPositionFirst=-1,textPositionLast=-1,
+						 textPositionAvg=0,sweight=1.0,is_tree_edge=False)
 		s.node[_S]['weight']=1
 		s.node[_S]['textPositionFirst']=1
 		s.node[_S]['textPositionAvg']=1
@@ -128,17 +130,17 @@ class text_graph(nx.DiGraph):
 			#print(t,' ',ss.ii)##########################
 			s.add_node(ss[t])
 			s._add_node(ss[t],'weight',1,1)
-			if not (s.node[ss[t]].get('textPositionFirst')):
-				s.node[ss[t]]['textPositionFirst']=t+1
-			s._add_node(ss[t],'textPositionAvg',t+1,t+1)
-			s.node[ss[t]]['textPositionLast']=t+1
+			if not (s.node[ss[t]].get(	'textPositionFirst')):
+				s.node[ss[t]][			'textPositionFirst']=t+1
+			s._add_node(ss[t],			'textPositionAvg',t+1,t+1)
+			s.node[ss[t]][				'textPositionLast']=t+1
 			
 			s.add_edge(ss[t-1],ss[t])
 			s._add_edge(ss[t-1],ss[t])
-			if not (s.edge[ss[t-1]][ss[t]].get('textPositionFirst')):
-				s.edge[ss[t-1]][ss[t]]['textPositionFirst']=t
-			s._add_edge(ss[t-1],ss[t],'textPositionAvg',1+t,t+1)
-			s.edge[ss[t-1]][ss[t]]['textPositionLast']=t
+			if not (s.edge[ss[t-1]][ss[t]].get(	'textPositionFirst')):
+				s.edge[ss[t-1]][ss[t]][			'textPositionFirst']=t
+			s._add_edge(ss[t-1],ss[t],			'textPositionAvg',1+t,t+1)
+			s.edge[ss[t-1]][ss[t]][				'textPositionLast']=t
 		for v in s.node.keys():
 			s.node[v]['textPositionAvg']/=float(s.node[v]['weight'])
 			s.node[v]['edges_out']=len(s.edge[v])
@@ -212,7 +214,7 @@ class text_graph(nx.DiGraph):
 				#print(absltM[kAr[i]])
 			except:
 				absltM[kAr[i]]=kAr[i]
-		tgAbs=text_graph('')
+		tgAbs=TextGraph('')
 		tgAbs.add_properties('node',weight=1,textPositionFirst=-1,textPositionLast=-1,textPositionAvg=0,edges_in=0,edges_out=0,sweight=1.0,morphCount=1)
 		tgAbs.add_properties('edge',weight=1,textPositionFirst=-1,textPositionLast=-1,textPositionAvg=0,sweight=1.0,is_tree_edge=False)
 		for k in kAr:
@@ -283,66 +285,35 @@ class text_graph(nx.DiGraph):
 		return lists[l]
 
 
-class sentence_graph(text_graph):
+class SentenceGraph(TextGraph):
 	def __init__(self, text, fromFile=0, stop_words=('-')):
-		W = ur'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯA-Z'
-		w = W+ur'a-zабвгдеёжзийклмнопрстуфхцчшщъыьэюя'
 
 		nx.DiGraph.__init__(self)
-		if (fromFile):
-			with open(text) as f:
-				text = f.read()
-		try:
-			encoding = \
-			chardet.detect(text[:289] + ' ' + text[len(text) / 2 - 144:len(text) / 2 + 144] + ' ' + text[-289:])[
-				'encoding']
-		except(TypeError):
-			encoding = 'utf-8'
-			print('Error: Encoding not detected, utf-8 selected\n')
-		sentence_pattern = re.compile(ur'.*?[\.\.\.|\.|\!|\?|\n\n](?=[^' + w + ur']*?([' + W + ur']))', flags=(re.U | re.S))
-		if (encoding):
-			sents = text_words(re.sub(ur'\s+', u' ', text.decode(encoding)+u' . A'), stop_words=(' ', '.', '\n', '\r\n',),
-							   words_pattern=sentence_pattern)
-			#wrd = text_words(text.decode(encoding),
-			#				 stop_words=stop_words)  # .decode(encoding))#text.decode('cp1251').split()#
-		else:
-			sents = text_words(re.sub(ur'\s+', u' ', unicode(text,'utf-8')+u' . A'), stop_words=(' ', '.','\n', '\r\n',),
-							   words_pattern=sentence_pattern)
-			#wrd = text_words(unicode(text, 'utf-8'), stop_words=stop_words)
-		self.node_list = dict()
-		self.node_property = dict()
-		self.edge_list = dict()
-		self.edge_property = dict()
-		_S = None
-		wrd = text_words(sents[0], stop_words=stop_words)
-		try:
-			self.add_node(wrd[0].lower())
-			_S = wrd[0].lower()
-		except(IndexError):
-			return None
-		self.node_list = dict()
-		self.node_property = dict()
-		self.edge_list = dict()
-		self.edge_property = dict()
-		self.add_properties('node', weight=1, textPositionFirst=-1, textPositionLast=-1, textPositionAvg=0, edges_in=0,
-							edges_out=0, sweight=1.0, sentCount=1, PositionFirstSent=1, PositionAvgSent= 1.0, PositionLastSent=1)
-		self.add_properties('edge', weight=1, textPositionFirst=-1, textPositionLast=-1, textPositionAvg=0, sweight=1.0,
-							is_tree_edge=False, PositionFirstSent=1, PositionAvgSent= 1.0, PositionLastSent=1)
-		self.node[_S]['weight'] = 1
-		self.node[_S]['sentCount'] = 1
-		self.node[_S]['textPositionFirst'] = 1
-		self.node[_S]['textPositionAvg'] = 1
-		self.node[_S]['textPositionLast'] = 1
 
-		self.node[_S]['PositionFirstSent'] = 1
-		self.node[_S]['PositionAvgSent'] = 1
-		self.node[_S]['PositionLastSent'] = 1
+		sents = self._read(text, fromFile)
+
+		#wrd = text_words(unicode(text, 'utf-8'), stop_words=stop_words)
+		self.node_list = dict()
+		self.node_property = dict()
+		self.edge_list = dict()
+		self.edge_property = dict()
 
 		self.sentence_words = dict()
 
-		sn = 0
-		self.sentence_words[sn]=set()
-		words_count = self.compute_stats_text_words(wrd, sn, 1)
+		self.add_properties('node', weight=1, textPositionFirst=-1, textPositionLast=-1,
+							textPositionAvg=0, edges_in=0,
+							edges_out=0, sweight=1.0, sentCount=1, PositionFirstSent=1,
+							PositionAvgSent= 1.0, PositionLastSent=1)
+		self.add_properties('edge', weight=1, textPositionFirst=-1, textPositionLast=-1,
+							textPositionAvg=0, sweight=1.0,
+							is_tree_edge=False, PositionFirstSent=1,
+							PositionAvgSent= 1.0, PositionLastSent=1)
+
+		#wrd = TextWords(sents[0], stop_words=stop_words)
+
+		sn = -1
+		#self.sentence_words[sn]=set()
+		words_count = 0# self.compute_stats_text_words(wrd, sn, 1)
 		for snt in sents:
 			sn += 1
 			try:
@@ -350,12 +321,18 @@ class sentence_graph(text_graph):
 			except(IndexError):
 				break
 			self.sentence_words[sn]=set()
-			wrd = text_words(snt, stop_words=stop_words)
+			wrd = TextWords(snt, stop_words=stop_words)
+			try:
+				word = self._single_node_process(wrd, sn, 0, words_count)
+			except(IndexError):
+				continue
 			words_count = self.compute_stats_text_words(wrd, sn, words_count)
 
-		# TODO compute right stats for words in sentences. e.g. Avg position in sent
-		if 1:
-			return
+		for snt in range(len(self.sentence_words)):
+			for w in self.sentence_words[snt]:
+				self._add_node(w,'sentCount',1,1)
+				self._add_node(w, 'avgSent', float(snt)/len(self.sentence_words[snt]),
+							   				 float(snt)/len(self.sentence_words[snt]))
 		for v in self.node.keys():
 			try:
 				self.node[v]['textPositionAvg'] /= float(self.node[v]['weight'])
@@ -379,120 +356,79 @@ class sentence_graph(text_graph):
 		self.sort_edge()
 		self.sort_node()
 
+	def _read(self, text, fromFile):
+		W = ur'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯA-Z'
+		w = W+ur'a-zабвгдеёжзийклмнопрстуфхцчшщъыьэюя'
+		sents = None
+		if (fromFile):
+			with open(text) as f:
+				text = f.read()
+		try:
+			encoding = \
+				chardet.detect(text[:289] + ' ' + text[len(text) / 2 - 144:len(text) / 2 + 144] + ' ' + text[-289:])[
+					'encoding']
+		except(TypeError):
+			encoding = 'utf-8'
+			print('Error: Encoding not detected, utf-8 selected\n')
+		sentence_pattern = re.compile(ur'.*?[\.\.\.|\.|\!|\?|\n\n](?=[^' + w + ur']*?([ ' + W + ur']))', flags=(re.U | re.S))
+		if (encoding):
+			sents = TextWords(re.sub(ur'\s+', u' ', text.decode(encoding) + u' . A'),
+							  stop_words=(' ', '.', '\n', '\r\n',),
+							  words_pattern=sentence_pattern)
+		#wrd = text_words(text.decode(encoding),
+		#				 stop_words=stop_words)  # .decode(encoding))#text.decode('cp1251').split()#
+		else:
+			sents = TextWords(re.sub(ur'\s+', u' ', unicode(text, 'utf-8') + u' . A'),
+							  stop_words=(' ', '.', '\n', '\r\n',),
+							  words_pattern=sentence_pattern)
+		return sents
+
+	def _single_node_process(self, wrd, sent_number, word_number=0, glbPos=0):
+		#type:  (TextWords, int, int) -> unicode
+		self.add_node(wrd[word_number].lower())
+		word = wrd[word_number].lower()
+
+		self._add_node(word, 'weight', 1, 1)
+		if not (self.node[word].get('textPositionFirst')):
+			self.node[word][		'textPositionFirst'] = 	glbPos + 1
+		if not (self.node[word].get(	'PositionFirstSent')):
+			self.node[word][			'PositionFirstSent'] = 	word_number + 1
+		self._add_node(word, 			'textPositionAvg' , 		glbPos + 1, glbPos + 1)
+		self.node[word][			 'textPositionLast'] = 	glbPos + 1
+		self. _add_node(word, 		 'PositionAvgSent', 		word_number + 1, word_number + 1)
+		self.node[word][			 'PositionLastSent'] = 	word_number + 1
+		self.sentence_words[sent_number].add(word)
+		return word
+
 	def compute_stats_text_words(self, wrd, sn, glbPos=0):
-		# type: (text_words, int, int) -> int
+		# type: (TextWords, int, int) -> int
 		t = 0
 		for tt in wrd:
 			t += 1
 			glbPos += 1
 			try:
-				wrd[t] = wrd[t]
+				word = self._single_node_process(wrd, sn, t)
+				preword = wrd[t - 1]
 			except(IndexError):
 				break
 			# TODO add stats for count of word repeating in diff sentences: sentCount
-			self.add_node(wrd[t])
-			self._add_node(wrd[t], 'weight', 1, 1)
-			if not (self.node[wrd[t]].get(	'textPositionFirst')):
-				self.node[wrd[t]][			'textPositionFirst'] = 	glbPos + 1
-			if not (self.node[wrd[t]].get(	'PositionFirstSent')):
-				self.node[wrd[t]][			'PositionFirstSent'] = 	t + 1
-			self._add_node(wrd[t], 			'textPositionAvg', 		glbPos + 1, glbPos + 1)
-			self.node[wrd[t]][				'textPositionLast'] = 	glbPos + 1
-			self._add_node(wrd[t], 			'PositionAvgSent', 		t + 1, t + 1)
-			self.node[wrd[t]][				'PositionLastSent'] = 	t + 1
-			self.add_edge(wrd[t - 1], wrd[t])
-			self._add_edge(wrd[t - 1], wrd[t])
-			if not (self.edge[wrd[t - 1]][wrd[t]].get(	'textPositionFirst')):
-				self.edge[wrd[t - 1]][wrd[t]][			'textPositionFirst'] = 	glbPos
-			self._add_edge(wrd[t - 1], wrd[t], 			'textPositionAvg', 		1 + glbPos, glbPos + 1)
-			self.edge[wrd[t - 1]][wrd[t]][				'textPositionLast'] = 	glbPos
-			if not (self.edge[wrd[t - 1]][wrd[t]].get(	'PositionFirstSent')):
-				self.edge[wrd[t - 1]][wrd[t]][			'PositionFirstSent'] = 	t
-			self._add_edge(wrd[t - 1], wrd[t], 			'PositionAvgSent', 		1 + t, t + 1)
-			self.edge[wrd[t - 1]][wrd[t]][				'PositionLastSent'] = 	t
 
-			self.sentence_words[sn].add(wrd[t])
-
+			self.add_edge(preword, word)
+			self._add_edge(preword, word)
+			if not (self.edge[preword][word].get(	'textPositionFirst')):
+				self.edge[preword][word][			'textPositionFirst'] = 	glbPos
+			self._add_edge(preword, word, 			'textPositionAvg', 		1 + glbPos, glbPos + 1)
+			self.edge[preword][word][				'textPositionLast'] = 	glbPos
+			if not (self.edge[preword][word].get(	'PositionFirstSent')):
+				self.edge[preword][word][			'PositionFirstSent'] = 	t
+			self._add_edge(preword, word, 			'PositionAvgSent', 		1 + t, t + 1)
+			self.edge[preword][word][				'PositionLastSent'] = 	t
 		return glbPos
 
 
-
-
-class separate_graph(text_graph):
-	def __init__(s,text,separating='(\.|;|\n\n)',fromFile=0):
-		nx.DiGraph.__init__(s)
-		if (fromFile):
-			with open(text) as f:
-				ss=f.read()#words_pattern=u'[a-zA-Zа-яёА-ЯЁ\-]+'
-		encoding=chardet.detect(text[:289]+' '+text[len(text)/2-144:len(text)/2+144]+' '+text[-289:])['encoding']
-		if (encoding=='utf-8'):
-			ss=text_words(text,words_pattern=u'([a-zA-Zа-яёА-ЯЁ\-]+|'+separating+')',stop_words=stop_words)
-		else:
-			ss=text_words(text.decode(encoding),words_pattern=u'([a-zA-Zа-яёА-ЯЁ\-]+|'+separating+')',stop_words=stop_words)#.decode(encoding))#text.decode('cp1251').split()#
-		s.node_list=dict()
-		s.node_property=dict()
-		s.edge_list=dict()
-		s.edge_property=dict()
-		_S=None
-		r=re.compile(separating)
-		try:
-			s.add_node(ss[0].lower())
-			_S=ss[0].lower()
-		except:
-			return None
-		s.node_list=dict()
-		s.node_property=dict()
-		s.edge_list=dict()
-		s.edge_property=dict()
-		s.add_properties('node',weight=1,textPositionFirst=-1,textPositionLast=-1,textPositionAvg=0,edges_in=0,edges_out=0,sweight=1.0)
-		s.add_properties('edge',weight=1,textPositionFirst=-1,textPositionLast=-1,textPositionAvg=0,sweight=1.0,is_tree_edge=False)
-		s.node[_S]['weight']=1
-		s.node[_S]['textPositionFirst']=1
-		s.node[_S]['textPositionAvg']=1
-		s.node[_S]['textPositionLast']=1
-		t=0
-		for tt in ss:
-			t+=1
-			try:
-				ss[t]=ss[t]
-			except(IndexError):
-				break
-			#print(t,' ',ss.ii)##########################
-
-			s.add_node(ss[t])
-			s._add_node(ss[t],'weight',1,1)
-			if not (s.node[ss[t]].get('textPositionFirst')):
-				s.node[ss[t]]['textPositionFirst']=t+1
-			s._add_node(ss[t],'textPositionAvg',t+1,t+1)
-			s.node[ss[t]]['textPositionLast']=t+1
-			
-			m=r.match(ss[t])
-			#if (m.end - m.start()==len(ss[t])):
-				#########################
-			
-			s.add_edge(ss[t-1],ss[t])
-			s._add_edge(ss[t-1],ss[t])
-			if not (s.edge[ss[t-1]][ss[t]].get('textPositionFirst')):
-				s.edge[ss[t-1]][ss[t]]['textPositionFirst']=t
-			s._add_edge(ss[t-1],ss[t],'textPositionAvg',1+t,t+1)
-			s.edge[ss[t-1]][ss[t]]['textPositionLast']=t
-		for v in s.node.keys():
-			s.node[v]['textPositionAvg']/=float(s.node[v]['weight'])
-			s.node[v]['edges_out']=len(s.edge[v])
-			s.node[v]['edges_in']=0
-			s.node[v]['sweight']=1.0/s.node[v]['weight']
-		for e in s.edge:
-			for ee in s.edge[e]:
-				s.edge[e][ee]['textPositionAvg']/=float(s.edge[e][ee]['weight'])
-				s.node[ee]['edges_in']+=1
-				s.edge[e][ee]['is_tree_edge']=s.node[e]['textPositionFirst']<s.node[ee]['textPositionFirst']
-				s.edge[e][ee]['sweight']=1.0/s.edge[e][ee]['weight']
-		s.sort_edge()
-		s.sort_node()
-
 def f():
-	text = 'D:/Users/DAN85_000/Desktop/py/tg/corpus/1.txt'
-	sg = sentence_graph(text, 1,stop_words=(u'в', u'но', u'и', u'на', u'из', u'то',
+	text = 'D:/Users/DAN85_000/Desktop/py/tg/corpus/0.txt'
+	sg = SentenceGraph(text, 1,stop_words=(u'в', u'но', u'и', u'на', u'из', u'то',
                                             u'к', u'а', u'что', u'-',u'не', u'с', u'о'))
 	kn = sg.node.keys()
 	return sg
