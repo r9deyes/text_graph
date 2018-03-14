@@ -434,7 +434,7 @@ def f():
 	return sg
 
 def all_pairs_in_sent(sg):
-	# type: (sentence_graph) -> None
+	# type: (SentenceGraph) -> None
 	words=None
 	res = []
 	for sn in range(len(sg.sentence_words)):
@@ -455,9 +455,6 @@ def all_pairs_in_sent(sg):
 					else:
 						res[sn][(u'_',u'_')] +=1
 	return res
-
-
-
 
 if __name__=='__main__':
 	sg=f()

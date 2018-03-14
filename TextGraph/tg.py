@@ -1,6 +1,6 @@
 # -*-coding:utf8-*-#
 if 1 and __name__ == '__main__':
-    from text_graph import TextGraph, sentence_graph
+    from text_graph import TextGraph, SentenceGraph, all_pairs_in_sent
 
     path = 'D:/Users/DAN85_000/Desktop/py/tg/'
 
@@ -8,7 +8,7 @@ if 1 and __name__ == '__main__':
         fl = open(out, 'wb')
         t = '<meta charset="utf-8">Kolvo vershin: %i\nKolvo dug: %i\n' % (
         tg.number_of_nodes(), tg.number_of_edges()) + '<br>'
-        wordFrequencyGraph(tg,out[:-5]+'w.png')
+        word_frequency_plot(tg, out[:-5] + 'w.png')
         t += '<img src="'+out[:-5]+'w.png'+'" alt="wordFrequencyGraph">'
         kn = tg.node.keys()
         kn.sort()
@@ -27,7 +27,7 @@ if 1 and __name__ == '__main__':
         ke.sort()
         we = tg.edge_property.keys()
 
-        pairWordsFrequencyGraph(tg,out[:-5]+'pw.png')
+        pair_words_frequency_plot(tg, out[:-5] + 'pw.png')
         t = '<img src="'+out[:-5]+'pw.png'+'" alt="pairwordFrequencyGraph">'
         t += '<table><tr><th> name </th><th> ' + ' </th><th> '.join(we) + '</th></tr>\n<tr><td>'
         t += '---' + '</td><td>---' * (len(we)) + '</td></tr>\n<tr><td>'
@@ -42,7 +42,7 @@ if 1 and __name__ == '__main__':
         fl.write(t)  # print(t)
         fl.close()
 
-    def f_stat(tg,out='D:/users/DAN85_000/Desktop/result.html'):
+    def f_full_stat(tg, out='D:/users/DAN85_000/Desktop/result.html'):
         fl = open(out.replace('.html','_.html'),'wb')
         t0 = 'Property \t | Max \t| Value \t | Min \t| Value \t | Avg Value \t | Closest Avg \t| Value \n'
         for p in tg.node_property:
@@ -53,8 +53,16 @@ if 1 and __name__ == '__main__':
                   (p, mx.encode('utf-8'), tg.node[mx][p], mn.encode('utf-8'), tg.node[mn][p], avg, ca.encode('utf-8'),
                    tg.node[ca][p])
             # (p,mx,tg.node[mx][p],mn,tg.node[mn][p],avg,ca,tg.node[ca][p])
+
         t0 += '-\t' * 17 + '\n'
-        t0 += 'Property \t | Max \t| Value \t | Min \t| Value \t | Avg Value \t | Closest Avg \t| Value\n'
+        t0 += f_edges_stat(tg)
+
+        t0 = '<table><tr><td>' + t0.replace('|', '</td><td>').replace('\n', '</td></tr>\n<tr><td>') + '</table><br>'
+        fl.write(t0)
+        fl.close()
+
+    def f_edges_stat(tg):
+        t0 = 'Property \t | Max \t| Value \t | Min \t| Value \t | Avg Value \t | Closest Avg \t| Value\n'
         for p in tg.edge_property:
             mx, mn, avg = tg.edge_list[p][0], tg.edge_list[p][-1], float(
                 sum([tg.edge[s[0]][s[1]][p] for s in tg.edge_list[p]])) / tg.number_of_edges()
@@ -64,10 +72,7 @@ if 1 and __name__ == '__main__':
                    mn[1].encode('utf-8'), tg.edge[mn[0]][mn[1]][p], avg, ca[0].encode('utf-8'), ca[1].encode('utf-8'),
                    tg.edge[ca[0]][ca[1]][p])
             # (p,mx[0],mx[1],tg.edge[mx[0]][mx[1]][p],mn[0],mn[1],tg.edge[mn[0]][mn[1]][p],avg,ca[0],ca[1],tg.edge[ca[0]][ca[1]][p])
-        t0 = '<table><tr><td>' + t0.replace('|', '</td><td>').replace('\n', '</td></tr>\n<tr><td>') + '</table><br>'
-        fl.write(t0)
-        fl.close()
-
+        return t0
 
     #	y="D:/Users/DAN85_000/Desktop/"
     #	f=open("D:/Users/DAN85_000/Desktop/new 2.txt",'r')
@@ -100,12 +105,13 @@ if 1 and __name__ == '__main__':
             tg = TextGraph(fl, 1, stop_words=(u'в', u'но', u'и', u'на', u'из', u'то', u'к', u'а', u'что', u'-', u'не', u'с', u'о'))#.get_morphem_absolut_graph()
             res = path+'result/tolstoi/S_' + str(i) + '.html'
             #f(tg, res)
-            f_stat(tg,res)
+            #f_full_stat(tg, res)
+            text_graph_scatter_representation(tg, res)
 
     def tolstoi_sentences():
         for i in range(1,5):
             fl = path+'corpus/tolstoi/' + str(i) + '.txt'
-            sg = sentence_graph(fl, fromfile=1,
+            sg = SentenceGraph(fl, fromfile=1,
                                 stop_words=(u'в', u'но', u'и', u'на', u'из', u'то',
                                             u'к', u'а', u'что', u'-',u'не', u'с', u'о'))
 
@@ -116,9 +122,10 @@ if 1 and __name__ == '__main__':
             u'в', u'но', u'и', u'на', u'из', u'то', u'к', u'а', u'что', u'-',u'не', u'с', u'о')).get_morphem_absolut_graph()
             res = path + 'result/' + str(i) + '.html'
             # f(tg, res)
-            f_stat(tg, res)
+            #f_full_stat(tg, res)
+            text_graph_scatter_representation(tg)
 
-    def wordFrequencyGraph(tg, fileName):
+    def word_frequency_plot(tg, fileName):
         import matplotlib.pyplot as plt
         y = [tg.node[i]['weight'] for i in tg.node_list['weight'] if tg.node[i]['weight'] > 1]
         if len(y)==0:
@@ -136,7 +143,7 @@ if 1 and __name__ == '__main__':
         plt.clf()
 
 
-    def pairWordsFrequencyGraph(tg, fileName):
+    def pair_words_frequency_plot(tg, fileName):
         import matplotlib.pyplot as plt
         y = [tg.edge[i[0]][i[1]]['weight'] for i in tg.edge_list['weight'] if tg.edge[i[0]][i[1]]['weight'] > 1]
         if len(y)==0:
@@ -153,9 +160,64 @@ if 1 and __name__ == '__main__':
         plt.savefig(fileName, format='png')
         plt.clf()
 
+    def text_graph_scatter_representation(tg, fileName=None):
+        # type: (TextGraph, str) -> None
+        import matplotlib.pyplot as plt
+        import matplotlib.transforms as mtrans
+        x,y,r = [],[],[]
+        for i in tg.node.keys():
+            x.append(tg.node[i]['textPositionFirst'])
+            y.append(tg.node[i]['textPositionLast'])
+            r.append(tg.node[i]['weight']**2)
+        plt.plot(x, y, 'r', lw=0.5)
+        plt.scatter(x, y, r)
+        plt.title('Text graph scatter on first & last positions with weight')
+        plt.ylabel('Last position')
+        plt.xlabel('First position')
+        if (fileName):
+            plt.savefig(fileName, format='png')
+        else:
+            plt.show()
+        plt.clf()
 
+    def sentence_graph_3dplot_representation(sg, fileName=None):
+        import matplotlib.pyplot as plt
+        from mpl_toolkits.mplot3d import Axes3D
+        fig = plt.figure()
+        ax = Axes3D(fig) #fig.add_subplot(111, projection = '3d')
+
+        rp = all_pairs_in_sent(sg)
+        rp.sort(cmp=lambda x, y: len(x)-len(y))
+        i=0
+        for r in rp:
+            def _f(x, y):
+                if r[x] > r[y]:
+                    return -1
+                elif r[x] < r[y]:
+                    return 1
+                else:
+                    return 0
+            ar = r.keys()
+            ar.sort(cmp=_f)
+            ar = ar[1:]
+            ax.plot(tuple(range(len(ar))), [r[k] for k in ar], zs=i*0.2, zdir='-y')
+            i += 1
+        ax.set_xlabel('Frequency word''s pair in text')
+        ax.set_ylabel('Order number of word''s pair')
+        ax.set_zlabel('Order number of sentences')
+        plt.show()
+
+
+    def greka_example():
+        f1 = path + 'corpus/1.txt'
+        tg = SentenceGraph(f1, fromFile=1)#TextGraph(f1,fromFile=1)
+        fl = path + 'result/3d_0.png'
+        #text_graph_scatter_representation(tg, fl)
+        sentence_graph_3dplot_representation(tg, fl)
+
+    greka_example()
     #winHelp_processing()
-    tolstoi_processing()
+    #tolstoi_processing()
 # print('V cnt: %i, E cnt: %i'%(len(tg.node),len(tg.edge)))
 ##	path=tg.shortest_way(tg.vertexes.lists['wight'][0],tg.node.lists['wight'][-1])
 #	for v in tg.node.keys():
