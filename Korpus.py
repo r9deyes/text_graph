@@ -4,6 +4,7 @@
 import os.path, cPickle, re
 import Web2Korpus, News2Korpus, ConvertText
 import locale
+import text_graph
 locale.setlocale(locale.LC_CTYPE, '')     # LC_CTYPE beeinflusst String-Operationen
 locale.setlocale(locale.LC_COLLATE, '')   # LC_COLLATE beeinflusst das Sortier-Verhalten
 
@@ -20,6 +21,7 @@ class Korpus:
         self.LkonkResultat = None
         self.zitatDatei = None
         self.dbGeaendert = 0
+        self.textGraph = None
 
     def newDb(self, ff):
         self.dbFile = ff
@@ -523,6 +525,29 @@ class Korpus:
             LConc._listFull_parsing(datei)
             self.LkonkResultat+=LConc.storage
 
+    def dbTextGraph(self, search_query=None, stop_words=('-')):
+        self.textGraph = []
+        dateien = self.getDbKeys()
+        i=0
+        for dat in dateien:
+            datei = self.db[dat]['file']
+            tg = text_graph.text_graph(datei, 0, stop_words)
+            self.textGraph.append((dat, tg,))
+            self.master.status.progress.updateProgress(newValue=i, newMax=len(dateien))
+            i+=1
+        if (self.dbFile):
+            f = open(self.dbFile+'_tg', 'wb')
+            cPickle.dump(self.textGraph, f, 2)
+            f.close()
+        self.master.status.progress.updateProgress(0)
+
+    def getTextGraph(self):
+        f = open(self.dbFile+'_tg', 'rb')
+        self.textGraph = cPickle.load(f)
+        f.close()
+
+
+
 
 class concordance:
     import re
@@ -533,6 +558,7 @@ class concordance:
     lenByLetters=False  #context length is by letters(T) or by words(F)
     sourceName=None
     storage='./concordance.csv'
+
     def __init__(s,key,sourceName,lenL=17,lenR=17,saveTo='list',separate=' ',sepByWords=False, lenByLetters=False):
         try:
             if not(isinstance(key,str)):
@@ -684,7 +710,7 @@ class concordance:
             if(not s.check_word(string[LKeyGapPos:RKeyGapPos])):
                 continue
             # Gefundenen String ins Resultat (besteht aus drei Teilen) und auch den Dateinamen
-#            print('b=%i, LKGP=%i, RGKP=%i, e=%i'%(begin,LKeyGapPos,RKeyGapPos,ende))
+            #print('b=%i, LKGP=%i, RGKP=%i, e=%i'%(begin,LKeyGapPos,RKeyGapPos,ende))
             listLeftConc=s.split(string[begin:LKeyGapPos],1)
             if len(listLeftConc)<=s.lenL and pos>=cL:#усдлвие что это начло текста и перед ним не может хватать элементов:
                 cL+=(s.lenL-len(listLeftConc))*12+12

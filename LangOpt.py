@@ -92,6 +92,7 @@ deutsch  = {
 "ClustNGramsTab": u"Cluster/N-Grams",
 "CollocatesTab" : u"Collocates",
 "LConcTab" : u"KWIDC",
+"TextGraphTab": u"Graph model",
 
 "KTinfo"        : u"TextSTAT \n\nBitte füllen Sie Ihr Korpus mit einigen Files bzw. öffnen Sie ein bestehendes TextSTAT-Korpus.",
 "KTkopieren"    : u"Dateinamen kopieren",
@@ -310,6 +311,7 @@ nederlands  = {
 "ClustNGramsTab": u"Cluster/N-Grams",
 "CollocatesTab" : u"Collocates",
 "LConcTab" : u"KWIDC",
+"TextGraphTab": u"Graph model",
 
 "KTinfo"        : u"TextSTAT \n\nEerst een paar bestanden toevoegen aan een nieuw corpus resp. een bestaand corpus openen.",
 "KTkopieren"    : u"Bestandsnaam kopiëren",
@@ -527,6 +529,7 @@ english  = {
 "ClustNGramsTab": u"Cluster/N-Grams",
 "CollocatesTab" : u"Collocates",
 "LConcTab" : u"KWIDC",
+"TextGraphTab": u"Graph model",
 
 "KTinfo"        : u"TextSTAT \n\nPlease create a corpus and add some files (or open existing corpus).",
 "KTkopieren"    : u"Copy file name",
@@ -745,6 +748,7 @@ portuguese  = {
 "ClustNGramsTab": u"Cluster/N-Grams",
 "CollocatesTab" : u"Collocates",
 "LConcTab" : u"KWIDC",
+"TextGraphTab": u"Graph model",
 
 "KTinfo"        : u"TextSTAT \n\nFavor, crie um corpus e adicione alguns arquivos (ou abra um corpus existente).",
 "KTkopieren"    : u"Copie o nome do arquivo",
@@ -964,6 +968,7 @@ francais  = {
 "ClustNGramsTab": u"Cluster/N-Grams",
 "CollocatesTab" : u"Collocates",
 "LConcTab" : u"KWIDC",
+"TextGraphTab": u"Graph model",
 
 "KTinfo"        : u"TextSTAT \n\nCréer un corpus et ajouter quelques fichiers (ou ouvrir un corpus existant).",
 "KTkopieren"    : u"Copier le nom du fichier",
@@ -1181,6 +1186,7 @@ galician  = {
 "ClustNGramsTab": u"Cluster/N-Grams",
 "CollocatesTab" : u"Collocates",
 "LConcTab" : u"KWIDC",
+"TextGraphTab": u"Graph model",
 
 "KTinfo"        : u"TextSTAT \n\nCree un corpus e engada algún ficheiro (ou abra un corpus existente).",
 "KTkopieren"    : u"Copiar o nome do ficheiro",
@@ -1401,6 +1407,7 @@ suomi  = {
 "ClustNGramsTab": u"Cluster/N-Grams",
 "CollocatesTab" : u"Collocates",
 "LConcTab" : u"KWIDC",
+"TextGraphTab": u"Graph model",
 
 "KTinfo"        : u"TextSTAT \n\nLuo korpus ja lisää siihen tiedostoja (tai avaa aiempi korpus).",
 "KTkopieren"    : u"Kopioi tiedostonimi",
@@ -1610,6 +1617,7 @@ polski  = {
 "ClustNGramsTab": u"Cluster/N-Grams",
 "CollocatesTab" : u"Collocates",
 "LConcTab" : u"KWIDC",
+"TextGraphTab": u"Graph model",
 
 "KTinfo"        : u"TextSTAT \n\nUtworz korpus i dodaj kilka plikow wzglednie otworz istniejacy korpus TextSTAT.",
 "KTkopieren"    : u"Kopiuj nazwa pliku",
@@ -1827,6 +1835,7 @@ espanol  = {
 "ClustNGramsTab": u"Cluster/N-Grams",
 "CollocatesTab" : u"Collocates",
 "LConcTab" : u"KWIDC",
+"TextGraphTab": u"Graph model",
 
 "KTinfo"        : u"TextSTAT \n\nFavor, cree una Unidad de Análisis y adicione algunos archivos (o abra una Unidad de Análisis existente).",
 "KTkopieren"    : u"Copiar o renombrar el archivo",
@@ -2045,6 +2054,7 @@ italiano  = {
 "ClustNGramsTab": u"Cluster/N-Grams",
 "CollocatesTab" : u"Collocates",
 "LConcTab" : u"KWIDC",
+"TextGraphTab": u"Graph model",
 
 "KTinfo"        : u"TextSTAT \n\nCrea un corpus e aggiungi almeno un file (oppure apri un corpus esistente).",
 "KTkopieren"    : u"Copia nome file",
@@ -2263,6 +2273,7 @@ czech  = {
 "ClustNGramsTab": u"Cluster/N-Grams",
 "CollocatesTab" : u"Collocates",
 "LConcTab" : u"KWIDC",
+"TextGraphTab": u"Graph model",
 
 "KTinfo"        : u"TextSTAT \n\nNaplňte korpus soubory nebo otevřete existující korpus TextSTAT.",
 "KTkopieren"    : u"Kopírovat názvy souborů",
@@ -2481,6 +2492,7 @@ catalan  = {
 "ClustNGramsTab": u"Cluster/N-Grams",
 "CollocatesTab" : u"Collocates",
 "LConcTab" : u"KWIDC",
+"TextGraphTab": u"Graph model",
 
 "KTinfo"        : u"TextSTAT \n\nSisplau, crea un corpus i afegeix-hi alguns fitxers (o obre un corpus existent).",
 "KTkopieren"    : u"Copia o reanomena el fitxer",
@@ -2690,6 +2702,7 @@ russian = {
 "ClustNGramsTab": u"Cluster/N-Grams",
 "CollocatesTab" : u"Коллокация",
 "LConcTab"      : u"КлючСловДискрКонт",
+"TextGraphTab": u"Графовая модель",
 
 
 "KTinfo"        : u"TextSTAT \n\nПожалуйста, создайте корпус и добавьте файл(ы) (или откройте существующий корпус).",
@@ -2747,13 +2760,13 @@ russian = {
 
 
 ##### Webdialog #####
-"WDinfo"        : u"Add HTML files directly from the internet.\nPlease enter URL:",
-"WDfrageSeiten" : u"How many pages do you want to add to your corpus?",
-"WDanzahl"      : u"number of pages to retrieve",
-"WDinSubdir"    : u"domain: only subdirectory",
-"WDaufServer"   : u"domain: whole server",
-"WDok"          : u"Search",
-"WDcancel"      : u"Close",
+"WDinfo"        : u"Добавьте HTML файлы напрямую из Интернета.\nВведите URL:",
+"WDfrageSeiten" : u"Сколько страниц Вы хотите добавить к корпусу?",
+"WDanzahl"      : u"Кол-во страниц для извлечения",
+"WDinSubdir"    : u"домен: только поддиректории",
+"WDaufServer"   : u"домен: весь сервер",
+"WDok"          : u"Поиск",
+"WDcancel"      : u"Закрыть",
 
 ##### NewsDialog #####
 "NDinfo"        : u"Add newsgroup postings to corpus", 
@@ -2765,30 +2778,30 @@ russian = {
 "NDcancel"      : u"Close",
 
 ##### QueryDialog #####
-"QDinfo"        : u"Help function for formulating complex queries \nWildcards are allowed here (* and ?)",
-"QDsuchFelder"  : u"Search term",
-"QAusdruck1"    : u"first search term",
-"QAusdruck2"    : u"second search term",
-"QAbstand"      : u"Number of words between the two search terms",
-"QAbstandMin"   : u"min. and   ",
+"QDinfo"        : u"Вспомогательная функция для формулирования сложных запросов.\n Работают шаблоны поиска (* и ?)",
+"QDsuchFelder"  : u"Искать терм",
+"QAusdruck1"    : u"Первый поисковый терм",
+"QAusdruck2"    : u"Второй поисковый терм",
+"QAbstand"      : u"Кол-во слов между двумя поиск. термами",
+"QAbstandMin"   : u"min. и   ",
 "QAbstandMax"   : u"max.",
-"QmachAusdruck" : u"Start search",
-"QDcancel"      : u"Close",
+"QmachAusdruck" : u"Начать поиск",
+"QDcancel"      : u"Закрыть",
 
 ##### Fehler #####
-"Error"         : u"Error",
-"ErrKorpNew"    : u"Corpus file could not be created!",
-"ErrKorpOpen"   : u"Corpus file could not be opened!\nAre you sure this is a TextSTAT corpus file?",
-"ErrKorpImp"    : u"Corpus file could not be imported!!",
-"ErrNoKorp"     : u"You have to create a corpus first (or to open an existing corpus).",
-"ErrKorpSave"   : u"Corpus file could not be saved!",
-"ErrFileOpen"   : u"Error on opening file!",
-"ErrSelect"     : u"Nothing selected!",
-"ErrOptSave"    : u"Options could not be saved!",
-"ErrExport"     : u"Export error",
+"Error"         : u"Ошибка",
+"ErrKorpNew"    : u"Файл корпуса не может быть создан!",
+"ErrKorpOpen"   : u"Файл корпуса не может быть открыт!\nВы уверены, что это файл корпуса TextSTAT?",
+"ErrKorpImp"    : u"Файл корпуса не может быть импортирован!",
+"ErrNoKorp"     : u"Сначала нужно создать файл корпуса(или открыть существующий).",
+"ErrKorpSave"   : u"Файл корпуса не может быть сохранен!",
+"ErrFileOpen"   : u"Ошибка открытия файла!",
+"ErrSelect"     : u"Ничего не выбрано!",
+"ErrOptSave"    : u"Настройки могут не сохранится!",
+"ErrExport"     : u"Ошбика экспорта",
 "ErrNoFreqList" : u"No word frequency list available",
 "ErrNoKonkList" : u"No word concordance list available",
-"ErrExcel"      : u"MS Excel error!\n(Are the Python win32 extentions an MS Excel installed correctly?)",
+"ErrExcel"      : u"Ошибка MS Excel!\n(Are the Python win32 extentions an MS Excel installed correctly?)",
 "ErrExcel65K"   : u"Error! MS Excel cannot handle more than 65500 rows. \nWe have %s forms.",
 "ErrWord"       : u"MS Word error!\n(Are the Python win32 extentions an MS Word installed correctly?)",
 "ErrExpFreq"    : u"Error on saving the exported word frequency list.",
@@ -2799,38 +2812,38 @@ russian = {
 
 
 ##### Mitteilungen und Fragen #####
-"AskSure"       : u"Are you sure?",
-"AskDelete"     : u"Do you really want to delete %s ?",
-"StatusWeb"     : u"%s files are being retrieved from the internet...",
+"AskSure"       : u"Вы уверены?",
+"AskDelete"     : u"Вы действительно хотите удалить %s ?",
+"StatusWeb"     : u"%s файлы(ов) были получены из Интернета...",
 "StatusNews"    : u"%s newsgroup postings are being retrieved...",
-"DateiInfo"     : u"File information",
-"DateiInfo2"    : u"File: %s\n\nPath: %s\n\nSize: %s\n",
+"DateiInfo"     : u"Информация о файле",
+"DateiInfo2"    : u"Файл: %s\n\nПуть: %s\n\nРазмер: %s\n",
 "InfoText"      : u"TextSTAT\
-\nAfter creating (or opening) a corpus, you could add some files to it. \
-You could also remove some files of course. The right mouse button will give you a context menu. \
-The corpus can be saved as a whole. \
-\nThere are some facilities for text analysis: under 'Word forms' you will find \
-frequency numbers for the tokens in your texts. 'Concordance' will show you KWIC concordances \
-(KeyWord in Context), 'Citation' presents more context.",
+\nПосле создания (или открытия) корпуса, к нему можно добавить еще файлы. \
+Файлы можно удалять из корпуса. Правая кнопка мыши откроет контекстное меню. \
+Можно сохранить корпус целиком. \
+\nРеализовано несколько инструментов для анализа текста: под 'Слоаврными формами' вы найдете \
+частоты для токенов из ваших текстов. 'Конкорданс' покажет вам KWIC конкордансы \
+(KeyWord in Context), 'Цитирование' отображает больше контекста.",
 
-"StatusKorpImp" : u"Corpus was imported successfully.",
-"StatusKorpSave": u"Corpus has been saved.",
-"StatusFiles"   : u" %s files | %s bytes ",
-"StatusKorpDat" : u" Corpus: %s  (actual CodePage setting: %s)",
-"KodierungInfo" : u"You may now add some files to the corpus.\n\nWord processor files:\n- MS Word files ('.doc' or '.docx'; Windows only)\n- OpenOffice-files ('.odt or .sxw')\n\nText files:\n- ASCII/ANSI text files (often '.txt')\n- HTML files (from your hard disc or directly from Internet)\n- Newgroup postings (directly from Internet)\nWhen adding text files, make sure you are using the correct encoding.\nThe actual setting is: %s",
-"StatusFormen"  : u" %s word forms/types (%s words/tokens in corpus)",
-"StatusNoKorp"  : u" no corpus ",
-"StatusSuchKonk": u"Look up concordances...",
-"StatusTreffer" : u" %s hits ",
-"StatusExpFreq" : u"Frequency list has been exported.",
-"StatusExpKonk" : u"Concordance list has been exported",
-"ExportHinweis" : u"You should use a non-proportional font (like Courier New)",
-"StatusClip"    : u"Selection has been copied to clipboard", 
-"SpracheAendern": u"Change language",
-"SpracheInfo"   : u"You have to restart TextSTAT to activate the language change.",
-"ProgBeenden"   : u"Exit TextSTAT",
-"AbfrageEnde"   : u"The corpus has been changed. \nWould you like to save your corpus \nbefore closing TextSTAT?",
-"AbfrageSave"   : u"The corpus has been changed. \nWould you like to save your corpus \nbefore opening another corpus?",
+"StatusKorpImp" : u"Корпус успешно импортирован.",
+"StatusKorpSave": u"Корпус сохранен.",
+"StatusFiles"   : u" %s файлов | %s байт ",
+"StatusKorpDat" : u" Корпус: %s  (установлена кодировка: %s)",
+"KodierungInfo" : u"Сейчас Вы можете добавить файлы к корпусу.\n\nТекстовые документы:\n- файлы MS Word ('.doc' или '.docx'; только Windows)\n- файлы OpenOffice ('.odt или .sxw')\n\nТекстовые файлы:\n- ASCII/ANSI текстовые файлы (расширение '.txt')\n- HTML страницы (из вашего диска или напрямую из Интернета)\n- Новостные сообщения (по протоколу NNTP)\nДобавляя текстовые файлы проверяйте используему кодировку.\nСейчас установлена: %s",
+"StatusFormen"  : u" %s словарных форм/типов (в корпусе %s слов/токенов)",
+"StatusNoKorp"  : u"нет корпуса ",
+"StatusSuchKonk": u"Ищем конкордансы...",
+"StatusTreffer" : u" %s результатов ",
+"StatusExpFreq" : u"Список частот экспортирован.",
+"StatusExpKonk" : u"Список конкардансов экспортирован",
+"ExportHinweis" : u"Используйте моноширный шрифт(например Courier New)",
+"StatusClip"    : u"Выделеное скопировано в буфер обмена",
+"SpracheAendern": u"Смена языка",
+"SpracheInfo"   : u"Перезапустите TextSTAT, чтобы применить смену языка.",
+"ProgBeenden"   : u"Закрыть TextSTAT",
+"AbfrageEnde"   : u"Корпус изменен. \nХотите сохранить ващ корпус \nперед закрытием TextSTAT?",
+"AbfrageSave"   : u"Корпус изменен. \nХотите сохранить ващ корпус \nперед открытием другого корпуса?",
 }
 
 
