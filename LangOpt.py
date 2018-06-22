@@ -8,12 +8,15 @@
 #
 # Sprachoptionen für TextSTAT
 #
+#   Russian local and text graph module changes
+# by Daniil Andriyanov, 2016-2018 <8595dan@gmail.com>
+#
 
 ##############################
 # ein paar globale Variablen
 Version = u"2.9c"
 VersionDatum = u"20/02/2014"
-Copyright = u"(c) Matthias Hüning 2000/2014"
+Copyright = u"(c) Matthias Hüning 2000/2014\nDaniil Andriyanov 2018"
 eMail = u"<matthias.huening@fu-berlin.de>"
 ProgURL = u"http://neon.niederlandistik.fu-berlin.de/textstat/"
 
@@ -146,7 +149,30 @@ deutsch  = {
 "LCTSepBy"      :u"Separate by words",
 "Source"        :u"Source",
 
-
+"Also"         :u"also",
+"TGCompTextGraph"   :u"Graph Modell berechnen",
+"TGLoadStatus"   :u"Text graph uploads from file...",
+"TGSuccessLoadStatus"   : u"erfolgreich aus Datei hochgeladen",
+"tf-idf"        : u"TF-IDF",
+"TGExport"      : u"Export",
+"TGGraphs"      : u"Frequency plots",
+"TGmaxWord"     : u"max Word",
+"TGmaxValue"        :u"max Value",
+"TGminWord"     :u"min Word",
+"TGminValue"    :u"min value",
+"TGavgWord"     :u"avg Word",
+"TGavgValue"    :u"avg value",
+"TGVertecesCount"  :u"Verteces count:",
+    "TGEdgesCount"  :u"Edges count:",
+"TGExportError" :u"text graph export error...",
+    "TGExportNodeSuccess"   :u"Text graph\'s nodes exported to CSV succesfully",
+    "TGExportEdgeSuccess"   :u"Text graph\'s edges exported to CSV succesfully",
+"TGdefaultStopWords"    :u",".join((u'в', u'но', u'и', u'на', u'из', u'то', u'к', u'а', u'что', u'-')),
+"TGdefaultWordPattern"    :ur"[a-zA-ZА-ЯёЁ\-]+",
+"TGStopWords"       :u"Stop-words",
+"TGSWordPattern"        :u"Word pattern",
+"TGComputeStatus"       :u"Compute text graph",
+"TGStemming"            :u"Stemming",
 
 ##### Webdialog #####
 "WDinfo"        : u"Fügen sie HTML-Seiten direkt aus dem Internet hinzu.\nBitte geben Sie eine URL ein:",
@@ -582,7 +608,30 @@ english  = {
 "LCTSeparate"   :u"Separator",
 "LCTSepBy"      :u"Separate by words",
 "Source"        :u"Source",
-
+"Also"         :u"Also",
+"TGCompTextGraph":  u"Compute graph-based model",
+"TGLoadStatus"   :u"Text graph uploads from file...",
+"TGSuccessLoadStatus"   :u"Text graph successfully uploaded from file",
+"tf-idf"        : u"TF-IDF",
+"TGExport"      : u"Export",
+"TGGraphs"      : u"Frequency plots",
+"TGmaxWord"     : u"max Word",
+"TGmaxValue"        :u"max Value",
+"TGminWord"     :u"min Word",
+"TGminValue"    :u"min value",
+"TGavgWord"     :u"avg Word",
+"TGavgValue"    :u"avg value",
+"TGVertecesCount"  :u"Verteces count:",
+"TGEdgesCount"  :u"Edges count:",
+"TGExportError" :u"text graph export error...",
+"TGExportNodeSuccess"   :u"Text graph\'s nodes exported to CSV succesfully",
+"TGExportEdgeSuccess"   :u"Text graph\'s edges exported to CSV succesfully",
+"TGdefaultStopWords"    :u",".join((u'в', u'но', u'и', u'на', u'из', u'то', u'к', u'а', u'что', u'-')),
+"TGdefaultWordPattern"    :ur"[a-zA-ZА-ЯёЁ\-]+",
+"TGSWordPattern"        :u"Word pattern",
+"TGStopWords"       :u"Stop-words",
+"TGComputeStatus"       :u"Compute text graph",
+"TGStemming"            :u"Stemming",
 
 ##### Webdialog #####
 "WDinfo"        : u"Add HTML files directly from the internet.\nPlease enter URL:",
@@ -2633,6 +2682,8 @@ El corpus es pot desar com un tot. \
 "AbfrageSave"   : u"El corpus ha canviat. \nVols desar el corpus \nabans d'obrir-ne un altre?",
 }
 
+#russian = english.copy()
+#russian.update({
 russian = {
 "Titel"         : u"TextSTAT",
 "Titel_lang"    : u"TextSTAT (Простой инструмент для анализа текста)",
@@ -2701,7 +2752,7 @@ russian = {
 "ZitatTab"      : u"Цитаты",
 "ClustNGramsTab": u"Cluster/N-Grams",
 "CollocatesTab" : u"Коллокация",
-"LConcTab"      : u"КлючСловДискрКонт",
+"LConcTab"      : u"N-граммы",
 "TextGraphTab": u"Графовая модель",
 
 
@@ -2758,6 +2809,30 @@ russian = {
 "LCTSepBy"      :u"Разделять по словам (\w+)",
 "Source"        :u"Источник",
 
+"Also"          :u"Другое",
+"TGCompTextGraph"   :u"Вычислить графовую модель",
+"TGLoadStatus"   :  u"Графовая модель загружается из файла...",
+"TGSuccessLoadStatus":u"Грвфовая модель успешно загружена из файлв",
+"tf-idf"        : u"TF-IDF",
+"TGExport"      : u"Экспорт",
+"TGGraphs"      : u"Графики частот",
+"TGmaxWord"     : u"max слово",
+"TGmaxValue"        :u"max значение",
+"TGminWord"     :u"min слово",
+"TGminValue"    :u"min значение",
+"TGavgWord"     :u"сред. слово",
+"TGavgValue"    :u"сред. значение",
+"TGVertecesCount"  :u"Количество вершин:",
+"TGEdgesCount"  :u"Количество дуг:",
+"TGExportError" :u"Ошибка экспорта графовой модели...",
+"TGExportNodeSuccess"   :u"выгрузка вершин графовой модели в .csv успешна",
+"TGExportEdgeSuccess"   :u"выгрузка дуг графовой модели в .csv успешна",
+"TGStopWords"       :u"Стоп-слова",
+"TGdefaultStopWords"    :u",".join((u'в', u'но', u'и', u'на', u'из', u'то', u'к', u'а', u'что', u'-')),
+"TGdefaultWordPattern"    :ur"[a-zA-ZА-ЯёЁ\-]+",
+"TGSWordPattern"        :u"Шаблон слов",
+"TGComputeStatus"       :u"Вычисление графовой модели..",
+"TGStemming"            :u"Нормализовать",
 
 ##### Webdialog #####
 "WDinfo"        : u"Добавьте HTML файлы напрямую из Интернета.\nВведите URL:",
@@ -2845,6 +2920,7 @@ russian = {
 "AbfrageEnde"   : u"Корпус изменен. \nХотите сохранить ващ корпус \nперед закрытием TextSTAT?",
 "AbfrageSave"   : u"Корпус изменен. \nХотите сохранить ващ корпус \nперед открытием другого корпуса?",
 }
+#)
 
 
 

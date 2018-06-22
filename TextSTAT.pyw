@@ -1,13 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os, cPickle, StringIO, sys, webbrowser
+import os, cPickle, StringIO, webbrowser
 from Tkinter import *
 # mal sehen, wie 
 # from ttk import *
 import tkMessageBox, tkFileDialog
-import StatusBar, ToolBar, ProgressBar
-import TabPage, MultiListBox
+from UIParts import ToolBar, StatusBar, MultiListBox, TabPage
 import Korpus, LangOpt
 try:
     from win32com.client import Dispatch
@@ -153,8 +152,10 @@ class GUI:
         MeinMenu.add_cascade(label=s['ImpEx'], underline=0, menu = exportmenu)
         exportmenu.add_command(label=s['Ex2csv'], underline=0, command = self.export2csv)
         exportmenu.add_command(label=s['Ex2txt'], underline=0, command = self.export2txt)
+        exportmenu.add_command(label='text graph -> csv', underline=0, command = self.export_text_graph2csv)
         if os.name == 'nt':
             exportmenu.add_separator()
+            exportmenu.add_command(label='text graph -> Excel', underline=1, command = self.export_text_graph2excel)
             exportmenu.add_command(label=s['Ex2excel'], underline=1, command = self.export2excel)
             exportmenu.add_command(label=s['Ex2word'], underline=1, command = self.export2word)
         # exportmenu.add_separator()
@@ -253,14 +254,18 @@ class GUI:
 
 
         # Die Arbeitsflaeche
-        self.tabPages = TabPage.TabPageSet( self.fenster, pageNames=[ s['KorpusTab'], s['FormenTab'], s['ConcTab'], s['ZitatTab'], s['LConcTab'], s['ClustNGramsTab'], s['CollocatesTab'] ] )
+        self.tabPages = TabPage.TabPageSet(self.fenster,
+                                           pageNames=[s['KorpusTab'], s['FormenTab'],
+                                                      s['ConcTab'], s['ZitatTab'],
+                                                      s['LConcTab'],  s['TextGraphTab']]) #s['ClustNGramsTab'], s['CollocatesTab'],
         self.tabPages.pack( expand=TRUE,fill=BOTH )
         self.machKorpusTab()
         self.machFormenTab()
         self.machKonkordanzTab()
         self.machZitatTab()
         self.machListKonkordanzTab()
-        self.machCollocatesTab()
+        #self.machCollocatesTab()
+        self.machTextGraphTab()
         self.tabPages.pages[s['KorpusTab']]['page'].lift()
 
 
@@ -307,7 +312,7 @@ class GUI:
         listframe = Frame(frame)
         listframe.pack(side=LEFT, expand=YES, fill=BOTH, padx=5, pady=5)
         self.freqliste = MultiListBox.MultiListbox(listframe, ((s['FTwortform'], 55), (s['FTfrequenz'], 5)),
-                            command=self.zeigKonkordanz, borderwidth=1, height=20)
+                                                   command=self.zeigKonkordanz, borderwidth=1, height=20)
         self.freqliste.pack(side=LEFT, fill=BOTH, expand=YES)
         for l in self.freqliste.lists:
             l.bind('<Enter>', self.statusAktualisieren)
@@ -372,7 +377,7 @@ class GUI:
         listframe = Frame(frame)
         listframe.pack(expand=YES, fill=BOTH, side=LEFT, padx=5, pady=5)
         self.konkliste = MultiListBox.MultiListbox(listframe, ((s['ConcTab'], 60),),
-                            command=self.zeigZitat, borderwidth=1, height=20)
+                                                   command=self.zeigZitat, borderwidth=1, height=20)
         self.konkliste.pack(side=LEFT, fill=BOTH, expand=YES)
         for l in self.konkliste.lists:
             l.bind('<Enter>', self.statusAktualisieren)
@@ -460,8 +465,8 @@ class GUI:
 
         listframe = Frame(frame)
         listframe.pack(expand=YES, fill=BOTH, side=LEFT, padx=5, pady=5)
-        self.Lkonkliste = MultiListBox.MultiListbox(listframe, ((s['LConcTab'], 60),(s['Source'],8)),
-                            command=self.zeigZitat, borderwidth=1, height=20)
+        self.Lkonkliste = MultiListBox.MultiListbox(listframe, ((s['LConcTab'], 60), (s['Source'], 8)),
+                                                    command=self.zeigZitat, borderwidth=1, height=20)
         self.Lkonkliste.pack(side=LEFT, fill=BOTH, expand=YES)
         for l in self.konkliste.lists:
             l.bind('<Enter>', self.statusAktualisieren)
@@ -528,8 +533,8 @@ class GUI:
 
         listframe = Frame(frame)
         listframe.pack(expand=YES, fill=BOTH, side=LEFT, padx=5, pady=5)
-        self.collliste = MultiListBox.MultiListbox(listframe, (('№', 3),(s['FTfrequenz'],3),(s['ClTFreqL'],3),(s['ClTFreqR'],3),(s['ClTKoef'],3),(s['ClTToken'],47)),
-                            command=self.zeigZitat, borderwidth=1, height=20)
+        self.collliste = MultiListBox.MultiListbox(listframe, (('№', 3), (s['FTfrequenz'], 3), (s['ClTFreqL'], 3), (s['ClTFreqR'], 3), (s['ClTKoef'], 3), (s['ClTToken'], 47)),
+                                                   command=self.zeigZitat, borderwidth=1, height=20)
         self.collliste.pack(side=LEFT, fill=BOTH, expand=YES)
         for l in self.collliste.lists:
             l.bind('<Enter>', self.statusAktualisieren)
@@ -570,6 +575,163 @@ class GUI:
 
         Button(optFrame, text=s['CTaktualisier'], command=self.zeigKonkordanz).pack(anchor=W, padx=5, pady=10)
 
+
+    def machTextGraphTab(self):
+        frame = self.tabPages.pages[s['TextGraphTab']]['page']
+        searchFrame = Frame(frame)
+        searchFrame.pack(fill=X, padx=10, pady=5)
+        searchFrame2 = Frame(frame)
+        searchFrame2.pack(fill=X, padx=10, pady=5)
+        statFrame = Frame(frame)
+        statFrame.pack(fill=X, padx=10, pady=5)
+        Label(searchFrame, text=s['TGSWordPattern']).pack(side=LEFT)
+        self.word_pattern = Entry(searchFrame, width=50, takefocus=1)
+        self.word_pattern.insert(END, s['TGdefaultWordPattern'])
+        self.word_pattern.pack(side=LEFT)
+        Label(searchFrame2,text=s['TGStopWords']).pack(side=LEFT)
+        self.stop_words = Entry(searchFrame2, width=50, takefocus=1)
+        self.stop_words.insert(END, s['TGdefaultStopWords'])
+        self.stop_words.pack(side=LEFT)
+        Button(searchFrame, text=s['TGCompTextGraph'], takefocus=1, command=self.compute_text_graph_stat).pack(anchor=W, padx=5, pady=10)
+        self.textGraphStatFrame = Frame(frame)
+        self.textGraphStatFrame.pack(expand=YES, fill=BOTH, side=LEFT, padx=5, pady=5)
+        self.textGraphList = MultiListBox.MultiListbox(
+                            self.textGraphStatFrame, (('-',8), (s['TGmaxWord'],17), (s['TGmaxValue'],4),
+                            (s['TGminWord'],17), (s['TGminValue'],3), (s['TGavgWord'],17), (s['TGavgValue'], 4)),
+                            borderwidth=1, height=20)
+        self.textGraphList.pack(side=LEFT, fill=BOTH, expand=YES)
+        buttonsFrame = LabelFrame(frame,text=s['Also'])
+        buttonsFrame.pack(fill=X, padx=5, pady=5)
+        Button(buttonsFrame, text=s['tf-idf'], takefocus=1, command=self.compute_text_graph_tf_idf).pack(anchor=W, padx=5, pady=10)
+        self.N_keywords = StringVar()
+        Spinbox(buttonsFrame, textvariable=self.N_keywords,from_=1,to=25,increment=1,width=3).pack(anchor=S)
+        Button(buttonsFrame, text=s['TGExport'], takefocus=1, command=self.text_graph_export).pack(anchor=W, padx=5, pady=10)
+        Button(buttonsFrame, text=s['TGGraphs'], takefocus=1, command=self.text_graph_show_graphs).pack(anchor=W, padx=5, pady=10)
+        Button(buttonsFrame, text=s['TGStemming'], takefocus=1, command=self.text_graph_stemming).pack(anchor=W, padx=5, pady=10)
+
+        def upd(event=None):
+            #tkMessageBox.askquestion(s['KorpusSave'], s['AbfrageSave'])
+            if self.korpus != None:
+                if self.korpus.textGraph == None:
+                    try:
+                        self.tabPages.ChangePage(s['TextGraphTab'])
+                        self.status.set(s["TGLoadStatus"])
+                        self.korpus.getTextGraph()
+                    except:
+                        return
+                self.status.set(s['TGSuccessLoadStatus'])
+                if self.textGraphList.size()<=1:
+                    self.update_data_text_graph_tab()
+
+        self.tabPages.pages[s['TextGraphTab']]['tab'].button.bind('<Button-1>', upd)
+        #self.data_text_graph_tab_TEST()
+
+        
+    def compute_text_graph_tf_idf(self, event=None):
+        keywords = dict()
+        idf = dict()
+        N_keywords=int(self.N_keywords.get())
+        from math import log
+        for f,tg in self.korpus.textGraph:
+            tg.add_properties('edge',tf_idf=0)
+            for e in tg.edge.keys():
+                for ee in tg.edge[e].keys():
+                    tg.edge[e][ee]['tf_idf']=((tg.edge[e][ee]['weight']*\
+                                             (tg.edge[e][ee]['textPositionLast']-tg.edge[e][ee]['textPositionFirst']))/\
+                                             ((tg.get('edge',tg.edge_list['textPositionLast'][0])['textPositionLast']+1)**2))
+                    if idf.get((e,ee)):
+                        idf[(e,ee)]+=1
+                    else:
+                        idf[(e,ee)]=1
+        D = len(self.korpus.textGraph)
+        for f,tg in self.korpus.textGraph:
+            for e in tg.edge.keys():
+                for ee in tg.edge[e].keys():
+                    tg.edge[e][ee]['tf_idf']*=log(D/float(idf[(e,ee)]),2)
+            tg.sort_edge(prop='tf_idf')
+        i=0
+        for f,tg in self.korpus.textGraph:
+            keywords[f]=tg.edge_list['tf_idf'][:N_keywords/2]
+            while (len(keywords[f]) < N_keywords and i<40):
+                for ee in tg.edge_list['tf_idf'][N_keywords/2:]:
+                    if ((ee[0] == e[0] or ee[0] == e[1]) and (e,ee) not in keywords[f]):
+                        keywords[f].append(ee)
+                        break
+                i+=1
+        text = ''
+        for f in keywords.keys():
+            text+=f+':\n'
+            for k in keywords[f]:
+                text += k[0]+' '+k[1]+'; '
+            text += '\n\n'
+
+        self.TF_IDF_Dialog(text=text)
+
+    def text_graph_export(self, event=None):
+        dd = tkFileDialog.askdirectory(initialdir=cfg['KorpDir'])
+        for f,tg in self.korpus.textGraph:
+            t0 = u' ; '.join((s['TGVertecesCount'], unicode(tg.number_of_nodes()),
+                            s['TGEdgesCount'], unicode(tg.number_of_edges())))+u'\n'
+            for p in tg.node_property:
+                mx, mn, avg = tg.node_list[p][0], tg.node_list[p][-1], float(
+                    sum([tg.node[s1][p] for s1 in tg.node_list[p]])) / tg.number_of_nodes()
+                ca = tg.find('node', p, avg)
+                t0 += u' ; '.join((p, mx, unicode(tg.node[mx][p]),
+                                 mn, unicode(tg.node[mn][p]),
+                                 ca, unicode(tg.node[ca][p])))+u'\n'
+                # (p,mx,tg.node[mx][p],mn,tg.node[mn][p],avg,ca,tg.node[ca][p])
+            t0 += u' ; '.join((' - ',) * 7)+u'\n'
+            for p in tg.edge_property:
+                mx, mn, avg = tg.edge_list[p][0], tg.edge_list[p][-1], float(
+                    sum([tg.edge[s1[0]][s1[1]][p] for s1 in
+                         tg.edge_list[p]])) / tg.number_of_edges()
+                ca = tg.find('edge', p, avg)
+                t0 += u' ; '.join((p, (mx[0]+u'-'+mx[1]),
+                                   unicode(tg.edge[mx[0]][mx[1]][p]),
+                                (mn[0]+u'-'+mn[1]),
+                                   unicode(tg.edge[mn[0]][mn[1]][p]),
+                                (ca[0]+u'-'+ca[1]),
+                                   unicode(tg.edge[ca[0]][ca[1]][p])))+u'\n'
+            d = open(dd + '/' + os.path.split(f)[-1][:245] + '_extr.csv', 'wb')
+            d.write(t0.encode('utf-8'))
+            d.close()
+
+    def text_graph_show_graphs(self, event=None):
+        import matplotlib.pyplot as plt
+        for f, tg in self.korpus.textGraph:
+            y = [tg.node[i]['weight'] for i in tg.node_list['weight'] if
+                 tg.node[i]['weight'] > 1]
+            if len(y) == 0:
+                print('No inputs', fileName)
+                return 0
+            if (y[0] >= y[-1]):
+                x = list(range(0, len(y)))
+            else:
+                x = list(range(len(y), 0))
+            plt.plot(x, y, color='b')
+            plt.title("Frequency of words in full text")
+            plt.ylabel('Frequency')
+            plt.xlabel('Order')
+            plt.show()
+
+            y = [tg.edge[i[0]][i[1]]['weight'] for i in tg.edge_list['weight']
+                 if tg.edge[i[0]][i[1]]['weight'] > 1]
+            if len(y) == 0:
+                print('No inputs', fileName)
+                return 0
+            if (y[0] >= y[-1]):
+                x = list(range(0, len(y)))
+            else:
+                x = list(range(len(y), 0))
+            plt.plot(x, y, color='r')
+            plt.title("Frequency of word's pairs in full text")
+            plt.ylabel('Frequency')
+            plt.xlabel('Order')
+            plt.show()
+
+    def text_graph_stemming(self, event=None):
+        for f, tg in self.korpus.textGraph:
+            tg = tg.get_morphem_absolut_grpah()
 
     def ZitatTabPopup(self, event):
         self.ZitatPopupMenu = Menu(self.root, tearoff=0)
@@ -1160,6 +1322,102 @@ class GUI:
             self.warnung(titel=s['Error'], text=meldung)
 
 
+
+    def compute_text_graph_stat(self, event=''):
+        self.busyCursorOn()
+
+        try:
+            self.tabPages.ChangePage(s['KorpusTab'])
+
+            self.status.set(s['TGComputeStatus'])
+            self.korpus.dbTextGraph(search_query=self.word_pattern.get(),
+                                    stop_words=self.stop_words.get().split(','))
+            self.tabPages.ChangePage(s['TextGraphTab'])
+            self.update_data_text_graph_tab()
+            #self.status.set(s['StatusTreffer'] % self.konkliste.size())
+        except StandardError, details:
+            self.warnung(titel=s['Error'], text=s['ErrSelect'])
+        self.busyCursorOff()
+
+    def TF_IDF_Dialog(self, text='', titel='TextSTAT TF-IDF'):
+        try:
+            self.td.focus_set()
+        except:
+            self.td = Toplevel(self.root)
+            self.td.transient(self.root)
+            self.td.title(titel)
+            self.td.geometry('600x400+50+50')
+            frame = Frame(self.td)
+            frame.pack(expand=YES, fill=BOTH)
+
+            scrollbar = Scrollbar(frame, orient=VERTICAL)
+            txt = Text(frame, borderwidth=1, height=15, wrap=WORD, font=(('Courier', 'New'), '9'), yscrollcommand=scrollbar.set)
+            scrollbar.config(command=txt.yview)
+            scrollbar.pack(side=RIGHT, fill=Y, padx=0)
+            txt.pack(side=LEFT, expand=YES, fill=BOTH)
+            Button(self.td, text=' OK ', command=self.td.destroy).pack(pady=10)
+            txt.insert(END, text)
+            self.td.focus_set()
+
+    def compute_sentences_text_graph_stat(self, event=''):
+        pass
+
+    def lable_grid_row(self, parent, row_list, row=0):
+        i=0
+        for t in row_list:
+            Label(parent, text=t).grid(column=i, row=row)
+            i += 1
+
+    def data_text_graph_tab_TEST(self):
+        self.textGraphList.delete(0, END)
+        for f in ('1) First text','2) Second text', '3) Third text'):
+            self.textGraphList.insert(END, ('', f[-17:])+('',)*6)
+            #self.textGraphList.insert(END, ('Property', 'Max', 'Value', 'Min', 'Value',
+            #                        'Avg Value', 'Closest Avg', 'Value'))
+            i=1
+            for p in ('wV', 'fPV', 'aPV', 'lPV', 'Ei', 'Eo'):
+                mx, mn, avg = 'TestWordMx', 'TestWordMn', 8 #tg.node_list[p][0], tg.node_list[p][-1], float(
+                    #sum([tg.node[s][p] for s in tg.node_list[p]])) / tg.number_of_nodes()
+                ca = 'Test-Word'#tg.find('node', p, avg)
+                self.textGraphList.insert(END, (p, mx.encode('utf-8'), 17,
+                                        mn.encode('utf-8'), 1, ca.encode('utf-8'), avg))
+                i+=1
+                # (p,mx,tg.node[mx][p],mn,tg.node[mn][p],avg,ca,tg.node[ca][p])
+            self.textGraphList.insert(END, (' - ',)*7)
+            #self.lable_grid_row(lf, ('Property', 'Max', 'Value', 'Min', 'Value',
+            #                         'Avg Value', 'Closest Avg', 'Value'),i+2)
+            #lf.pack()
+
+
+    def update_data_text_graph_tab(self):
+        global s
+        for f,tg in self.korpus.textGraph:
+            self.textGraphList.insert(END, ('', f[-17:], s['TGVertecesCount'], str(tg.number_of_nodes()),
+                                            s['TGEdgesCount'], str(tg.number_of_edges()),''))
+            for p in tg.node_property:
+                mx, mn, avg = tg.node_list[p][0], tg.node_list[p][-1], float(
+                    sum([tg.node[s1][p] for s1 in tg.node_list[p]])) / tg.number_of_nodes()
+                ca = tg.find('node', p, avg)
+                self.textGraphList.insert(END, (p, mx.encode('utf-8'), tg.node[mx][p],
+                                                mn.encode('utf-8'), tg.node[mn][p],
+                                                ca.encode('utf-8'), tg.node[ca][p]))
+                # (p,mx,tg.node[mx][p],mn,tg.node[mn][p],avg,ca,tg.node[ca][p])
+            self.textGraphList.insert(END, (' - ',) * 7)
+            for p in tg.edge_property:
+                mx, mn, avg = tg.edge_list[p][0], tg.edge_list[p][-1], float(
+                    sum([tg.edge[s1[0]][s1[1]][p] for s1 in
+                         tg.edge_list[p]])) / tg.number_of_edges()
+                ca = tg.find('edge', p, avg)
+                self.textGraphList.insert(END,
+                      (p, (mx[0]+u'-'+mx[1]).encode('utf-8'),
+                       tg.edge[mx[0]][mx[1]][p],
+                       (mn[0]+u'-'+mn[1]).encode('utf-8'),
+                       tg.edge[mn[0]][mn[1]][p],
+                       (ca[0]+u'-'+ca[1]).encode('utf-8'),
+                       tg.edge[ca[0]][ca[1]][p]))
+            self.textGraphList.insert(END, (' - ',) * 7)
+
+
 ###########
 # Allerlei Hilfsfunktionen
 
@@ -1265,6 +1523,77 @@ class GUI:
         except:
             self.warnung(s['ErrExport'], s['ErrExpFreq'])
 
+
+    def export_text_graph2csv(self):
+        textGraphs = self.korpus.textGraph
+        dd = tkFileDialog.askdirectory(initialdir=cfg['KorpDir'])
+        for f,tg in textGraphs:
+            content = StringIO.StringIO()
+            try:
+                kn = tg.node.keys()
+                kn.sort()
+                wn = tg.node_property.keys()
+                content.write('node,'+','.join(wn) + '\n')
+                for k in kn:
+                    content.write(k)#k.encode('utf-8')
+                    for w in wn:
+                        content.write(',%.3f' % tg.node[k][w])
+                    content.write('\n')
+
+                content = content.getvalue()
+                content = content.encode(self.dateiart.get(), 'replace')
+                d = open(dd+'/'+os.path.split(f)[-1][:245]+'_node.csv','w')
+                d.write(content)
+                d.close()
+                self.status.set(s['TGExportNodeSuccess'])
+            except(ArithmeticError):
+                self.warnung(s['ErrExport'], s['TGExportError'])
+
+            try:
+                content = StringIO.StringIO()
+                ke = tg.edges()
+                ke.sort()
+                we = tg.edge_property.keys()
+                content.write('word1,word2,'+','.join(we) + '\n')
+                for k in ke:
+                    content.write(k[0]+','+k[1])
+                    for w in we:
+                        content.write(',%.3f' % tg.edge[k[0]][k[1]][w])
+                    content.write('\n')
+
+                content = content.getvalue()
+                content = content.encode(self.dateiart.get(), 'replace')
+                d = open(dd+'/'+ os.path.split(f)[-1][:245]+'_edge.csv','w')
+                d.write(content)
+                d.close()
+                self.status.set(s['TGExportEdgeSuccess'])
+            except(ArithmeticError):
+                self.warnung(s['ErrExport'], s['TGExportError'])
+
+    def export_text_graph2excel(self):
+        return
+        if len(wortliste) > 65000:
+            self.warnung(s['ErrExport'], s['ErrExcel65K'] % len(wortliste))
+        else:
+            try:
+                if len(wortliste) > 1:
+                    wortliste = [(a.strip(), b.strip()) for (a, b) in wortliste]
+                    meinXL = Dispatch("Excel.Application")
+                    meinXL.Visible = 1
+                    meinXL.Workbooks.Add()
+                    tabelle = meinXL.Workbooks(1).Sheets(1)
+                    tabelle.Cells(2,1).Value = 'ACHTUNG - ATTENTION'
+                    tabelle.Cells(3,1).Value = 'Dies kann dauern...'
+                    tabelle.Cells(4,1).Value = 'This can take a while...'
+                    titel = '%(Titel)s %(Version)s' % s
+                    tabelle.Cells(2,4).Value = titel
+                    tabelle.Cells(3,4).Value = s['Copyright']
+                    tabelle.Cells(4,4).Value = s['ProgURL']
+                    tabelle.Range(tabelle.Cells(1,1), tabelle.Cells(len(wortliste),2)).Value=wortliste
+                else:
+                    self.warnung(s['ErrExport'], s['ErrNoFreqList'])
+            except:
+                self.warnung(s['ErrExport'], s['ErrExcel'])
 
     def export2word(self):
         konkliste = self.konkliste.get(0,END)

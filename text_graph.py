@@ -94,7 +94,7 @@ class text_graph(nx.DiGraph):
 				encoding=kwargs['encoding']
 			else:
 				encoding=chardet.detect(text[:289]+' '+text[len(text)/2-144:len(text)/2+144]+' '+text[-289:])['encoding']
-		except(TypeError):
+		except(TypeError, NameError):
 			encoding='utf-8'
 			#print('Error: Encoding not detected, utf-8 selected\n')
 		if (encoding != 'utf-8'):

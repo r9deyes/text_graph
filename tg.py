@@ -92,7 +92,7 @@ if 1 and __name__ == '__main__':
 
 
     def tolstoi_processing():
-        for i in range(3, 4):
+        for i in range(1, 4):
             fl = path+'corpus/tolstoi/' + str(i) + '.txt'
             tg = text_graph(fl, 1, stop_words=(u'в', u'но', u'и', u'на', u'из', u'то', u'к', u'а', u'что', u'-',u'не', u'с', u'о'))#.get_morphem_absolut_graph()
             res = path+'result/tolstoi/S_' + str(i) + '.html'
@@ -146,9 +146,9 @@ if 1 and __name__ == '__main__':
 
 if __name__=='__main__':
     #winHelp_processing()
-    #tolstoi_processing()
-    tg  = text_graph('Е Х А Л Г Р Е К А Ч Е Р Е З Р Е К У')
-    f_stat(tg, './result/greka.html')
+    tolstoi_processing()
+    #tg  = text_graph('Е Х А Л Г Р Е К А Ч Е Р Е З Р Е К У')
+    #f_stat(tg, './result/greka.html')
 	
 
 # print('V cnt: %i, E cnt: %i'%(len(tg.node),len(tg.edge)))
