@@ -1391,6 +1391,7 @@ class GUI:
 
     def update_data_text_graph_tab(self):
         global s
+        self.textGraphList.delete(0, END)
         for f,tg in self.korpus.textGraph:
             self.textGraphList.insert(END, ('', f[-17:], s['TGVertecesCount'], str(tg.number_of_nodes()),
                                             s['TGEdgesCount'], str(tg.number_of_edges()),''))

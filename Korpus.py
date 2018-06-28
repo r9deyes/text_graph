@@ -531,7 +531,7 @@ class Korpus:
         i=0
         for dat in dateien:
             datei = self.db[dat]['file']
-            tg = text_graph.text_graph(datei, 0, stop_words)
+            tg = text_graph.text_graph(datei, 0, stop_words, word_pattern=search_query)
             self.textGraph.append((dat, tg,))
             self.master.status.progress.updateProgress(newValue=i, newMax=len(dateien))
             i+=1
